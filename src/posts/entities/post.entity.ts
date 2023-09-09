@@ -1,11 +1,4 @@
-import {
-  DateTimeType,
-  Entity,
-  ManyToOne,
-  PrimaryKey,
-  Property,
-} from '@mikro-orm/core';
-import { User } from '../../users/entities/user.entity';
+import { DateTimeType, Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { CreatePostDto } from '../dto/create-post.dto';
 
 @Entity()
@@ -39,9 +32,6 @@ export class Post {
 
   @Property({ default: null })
   likes?: boolean;
-
-  @Property({ persist: false })
-  voted?: boolean;
 
   static fromDto(createPostDto: CreatePostDto): Post {
     const post = new Post();

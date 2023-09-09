@@ -11,61 +11,35 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthUser } from 'src/auth/decorators/user.decorator';
-import { User } from '../users/entities/user.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { LikePostDto } from './dto/like-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostResponseInterceptor } from './interceptors/post-response.interceptor';
 import { PostsService } from './posts.service';
-import { CommentsService } from 'src/comments/comments.service';
-import { CreateCommentDto } from 'src/comments/dto/create-comment.dto';
 
 @Controller('posts')
 export class PostsController {
-  constructor(
-    private readonly postsService: PostsService,
-    private readonly commentsService: CommentsService,
-  ) {}
+  constructor(private readonly postsService: PostsService) {}
 
   @Post()
   @UseInterceptors(PostResponseInterceptor)
   create(
     @Body(new ValidationPipe({ transform: true, whitelist: true }))
     createPostDto: CreatePostDto,
-    ,
   ) {
-    return this.postsService.create(createPostDto, authUser);
+    return this.postsService.create(createPostDto);
   }
 
   @Get()
   @UseInterceptors(PostResponseInterceptor)
   findAll() {
-    return this.postsService.findAll(authUser);
-  }
-
-  @Get('mine')
-  @UseInterceptors(PostResponseInterceptor)
-  async findAllMine() {
-    return await this.postsService.findByCreator(authUser.id, authUser);
-  }
-
-  @Get('user/:id')
-  @UseInterceptors(PostResponseInterceptor)
-  async findByCreator(
-    @Param('id', ParseIntPipe) userId: number,
-    ,
-  ) {
-    return await this.postsService.findByCreator(userId, authUser);
+    return this.postsService.findAll();
   }
 
   @Get(':id')
   @UseInterceptors(PostResponseInterceptor)
-  findOne(
-    @Param('id', ParseIntPipe) postId: number,
-    ,
-  ) {
-    return this.postsService.findOne(postId, authUser);
+  findOne(@Param('id', ParseIntPipe) postId: number) {
+    return this.postsService.findOne(postId);
   }
 
   @Put(':id')
@@ -80,31 +54,23 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async remove(
-    @Param('id', ParseIntPipe) postId: number,
-  ) {
+  async remove(@Param('id', ParseIntPipe) postId: number) {
     await this.postsService.remove(postId);
   }
 
   @Post(':id/likes')
+  @HttpCode(204)
   async likePost(
     @Param('id', ParseIntPipe) postId: number,
     @Body(new ValidationPipe({ transform: true, whitelist: true }))
-    liketDto: LikePostDto,
-    ,
+    likeDto: LikePostDto,
   ) {
-    return {
-      totalLikes: await this.postsService.likePost(liketDto, postId),
-    };
+    await this.postsService.likePost(likeDto, postId);
   }
 
   @Delete(':id/likes')
-  async deleteLikePost(
-    @Param('id', ParseIntPipe) postId: number,
-    ,
-  ) {
-    return {
-      totalLikes: await this.postsService.deleteLikePost(postId),
-    };
+  @HttpCode(204)
+  async deleteLikePost(@Param('id', ParseIntPipe) postId: number) {
+    await this.postsService.deleteLikePost(postId);
   }
 }
