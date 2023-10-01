@@ -30,13 +30,7 @@ export class PostsService {
   }
 
   findAll() {
-    return this.createPostSelect().getResultList();
-  }
-
-  findByCreator(idUser: number) {
-    return this.createPostSelect()
-      .where({ creator: { id: idUser } })
-      .getResultList();
+    return this.createPostSelect().orderBy({ date: 'DESC' }).getResultList();
   }
 
   async findOne(id: number) {
