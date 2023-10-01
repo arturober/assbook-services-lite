@@ -15,6 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix(
     appConfig().basePath ? appConfig().basePath.slice(0, -1) : '',
   );
+  console.log('Escuchando en puerto: ' + appConfig().port);
   await app.listen(appConfig().port);
 }
 bootstrap();
