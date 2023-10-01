@@ -30,7 +30,7 @@ export class PostsService {
   }
 
   findAll() {
-    return this.createPostSelect().orderBy({ date: 'DESC' }).getResultList();
+    return this.createPostSelect().getResultList();
   }
 
   async findOne(id: number) {
